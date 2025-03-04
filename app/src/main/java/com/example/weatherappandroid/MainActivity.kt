@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalPermissionsApi::class)
 package com.example.weatherappandroid
 
+import WeatherViewModelFactory
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -9,11 +10,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,12 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import com.example.weatherappandroid.repository.WeatherRepository
 import com.example.weatherappandroid.ui.theme.WeatherAppAndroidTheme
+import com.example.weatherappandroid.viewmodel.WeatherViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -66,6 +70,10 @@ class MainActivity : ComponentActivity() {
 
                 val coroutineScope = rememberCoroutineScope()
 
+                val viewModel: WeatherViewModel by viewModels {
+                    WeatherViewModelFactory(weatherRepository)
+                }
+
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -77,6 +85,9 @@ class MainActivity : ComponentActivity() {
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold
                         )
+                        LaunchedEffect(it) {
+                            viewModel.fetchWeather(it.latitude, it.longitude)
+                        }
                     }
 
                     Button(
@@ -92,11 +103,13 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text(text = "Get my location")
                     }
+                    WeatherScreen(viewModel=viewModel)
                 }
             }
         }
     }
 }
+
 
 class LocationManager(
     private val context: Context,
@@ -153,3 +166,5 @@ class LocationManager(
         }
     }
 }
+
+val weatherRepository = WeatherRepository()
