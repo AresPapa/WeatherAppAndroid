@@ -10,8 +10,8 @@ interface OpenMeteoApi {
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
         @Query("timezone") timezone: String = "auto",
-        @Query("current") current: String = "weather_code, temperature_2m",
-        @Query("hourly") hourly: String = "time, weather_code, temperature_2m, relative_humidity_2m",
-        @Query("daily") daily: String = "time, weather_code, temperature_2m_max, temperature_2m_min"
+        @Query("current_weather") currentWeather: Boolean = true,
+        @Query("hourly") hourly: String = "temperature_2m,relative_humidity_2m,weather_code",
+        @Query("daily") daily: String = "temperature_2m_max,temperature_2m_min,weather_code"
     ): WeatherResponse
 }

@@ -1,28 +1,25 @@
 package com.example.weatherappandroid.repository
 
+import android.util.Log
 import com.example.weatherappandroid.api.OpenMeteoApi
-
+import com.example.weatherappandroid.api.RetrofitClient
 import com.example.weatherappandroid.data.WeatherResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class WeatherRepository {
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://api.open-meteo.com/v1/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val api: OpenMeteoApi = RetrofitClient.openMeteoApi
 
-    private val service = retrofit.create(OpenMeteoApi::class.java)
-
-    suspend fun getWeatherForLocation(latitude: Double, longitude: Double): Result<WeatherResponse> {
+    suspend fun getWeatherForLocation(latitude: Double, longitude: Double): WeatherResponse {
         return withContext(Dispatchers.IO) {
             try {
-                val response = service.getWeather(latitude, longitude)
-                Result.success(response)
+                Log.d("WeatherRepository", "Requesting weather data for lat: $latitude, lon: $longitude")
+                val response = api.getWeather(latitude, longitude)
+                Log.d("WeatherRepository", "Received weather data: $response")
+                response
             } catch (e: Exception) {
-                Result.failure(e)
+                Log.e("WeatherRepository", "Error fetching weather data: ${e.message}")
+                throw e
             }
         }
     }

@@ -2,15 +2,19 @@ package com.example.weatherappandroid.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherappandroid.data.WeatherResponse
+import com.example.weatherappandroid.data.CurrentWeather
+import com.example.weatherappandroid.data.HourlyWeather
 import com.example.weatherappandroid.repository.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(private val weatherRepository: WeatherRepository) : ViewModel() {
-    private val _weatherData = MutableStateFlow<WeatherResponse?>(null)
-    val weatherData: StateFlow<WeatherResponse?> = _weatherData
+    private val _currentWeather = MutableStateFlow<CurrentWeather?>(null)
+    val currentWeather: StateFlow<CurrentWeather?> = _currentWeather
+
+    private val _hourlyWeather = MutableStateFlow<HourlyWeather?>(null)
+    val hourlyWeather: StateFlow<HourlyWeather?> = _hourlyWeather
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -23,12 +27,9 @@ class WeatherViewModel(private val weatherRepository: WeatherRepository) : ViewM
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                val result = weatherRepository.getWeatherForLocation(latitude, longitude)
-                if (result.isSuccess) {
-                    _weatherData.value = result.getOrNull()
-                } else {
-                    _errorMessage.value = result.exceptionOrNull()?.message
-                }
+                val response = weatherRepository.getWeatherForLocation(latitude, longitude)
+                _currentWeather.value = response.current_weather
+                _hourlyWeather.value = response.hourly
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {
