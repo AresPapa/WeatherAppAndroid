@@ -9,7 +9,9 @@ interface OpenMeteoApi {
     suspend fun getWeather(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("current") current: String = "temperature_2m,windspeed_10m",
-        @Query("timezone") timezone: String = "auto"
+        @Query("timezone") timezone: String = "auto",
+        @Query("current") current: String = "weather_code, temperature_2m",
+        @Query("hourly") hourly: String = "time, weather_code, temperature_2m, relative_humidity_2m",
+        @Query("daily") daily: String = "time, weather_code, temperature_2m_max, temperature_2m_min"
     ): WeatherResponse
 }

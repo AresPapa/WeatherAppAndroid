@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.weatherappandroid.viewmodel.WeatherViewModel
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
@@ -33,6 +35,30 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
+                Text(
+                    text = "Hourly Weather:",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                weatherData?.hourly?.time?.forEachIndexed { index, time ->
+                    val formattedTime = ZonedDateTime.parse(time).format(DateTimeFormatter.ofPattern("HH:mm"))
+                    Text(
+                        text = "$formattedTime: ${weatherData!!.hourly.temperature_2m[index]}°C",
+                        fontSize = 16.sp
+                    )
+                }
+                Text(
+                    text = "Daily Weather:",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                weatherData?.daily?.time?.forEachIndexed { index, time ->
+                    val formattedDay = ZonedDateTime.parse(time).format(DateTimeFormatter.ofPattern("dd"))
+                    Text(
+                        text = "$formattedDay: Max ${weatherData!!.daily.temperature_2m_max[index]}°C, Min ${weatherData!!.daily.temperature_2m_min[index]}°C",
+                        fontSize = 16.sp
+                    )
+                }
             }
             else -> {
                 Text(text = "No weather data available", fontSize = 24.sp, fontWeight = FontWeight.Bold)
