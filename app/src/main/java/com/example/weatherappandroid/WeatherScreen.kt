@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.weatherappandroid.components.DailyWeatherDisplay
 import com.example.weatherappandroid.components.HourlyWeatherDisplay
 import com.example.weatherappandroid.viewmodel.WeatherViewModel
 
@@ -18,6 +19,7 @@ import com.example.weatherappandroid.viewmodel.WeatherViewModel
 fun WeatherScreen(viewModel: WeatherViewModel) {
     val currentWeather = viewModel.currentWeather.collectAsState()
     val hourlyWeather = viewModel.hourlyWeather.collectAsState()
+    val dailyWeather = viewModel.dailyWeather.collectAsState()
 
     val isLoading = viewModel.isLoading.collectAsState()
     val errorMessage = viewModel.errorMessage.collectAsState()
@@ -40,6 +42,9 @@ fun WeatherScreen(viewModel: WeatherViewModel) {
                 Text(text = "Temperature: ${currentWeather.value?.temperature}°C")
                 hourlyWeather.value?.let {
                     HourlyWeatherDisplay(hourlyWeather = it)
+                }
+                dailyWeather.value?.let {
+                    DailyWeatherDisplay(dailyWeather = it)
                 }
             }
             else -> {

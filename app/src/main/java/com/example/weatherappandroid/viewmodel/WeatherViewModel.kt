@@ -3,6 +3,7 @@ package com.example.weatherappandroid.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherappandroid.data.CurrentWeather
+import com.example.weatherappandroid.data.DailyWeather
 import com.example.weatherappandroid.data.HourlyWeather
 import com.example.weatherappandroid.repository.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,9 @@ class WeatherViewModel(private val weatherRepository: WeatherRepository) : ViewM
 
     private val _hourlyWeather = MutableStateFlow<HourlyWeather?>(null)
     val hourlyWeather: StateFlow<HourlyWeather?> = _hourlyWeather
+
+    private val _dailyWeather = MutableStateFlow<DailyWeather?>(null)
+    val dailyWeather: StateFlow<DailyWeather?> = _dailyWeather
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -30,6 +34,7 @@ class WeatherViewModel(private val weatherRepository: WeatherRepository) : ViewM
                 val response = weatherRepository.getWeatherForLocation(latitude, longitude)
                 _currentWeather.value = response.current_weather
                 _hourlyWeather.value = response.hourly
+                _dailyWeather.value = response.daily
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {

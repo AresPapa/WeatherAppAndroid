@@ -14,11 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.weatherappandroid.data.DailyWeather
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun DailyWeatherDisplay(dailyWeather: DailyWeather) {
+    val formatter = DateTimeFormatter.ofPattern("EEEE, MMM d")
+
     LazyColumn(modifier = Modifier.padding(8.dp)) {
         items(dailyWeather.temperature_2m_max.size) { index ->
+            val date = LocalDate.now().plusDays(index.toLong()).format(formatter)
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -29,7 +35,7 @@ fun DailyWeatherDisplay(dailyWeather: DailyWeather) {
                     modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Day $index", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    Text(text = date, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                     Text(text = "Max: ${dailyWeather.temperature_2m_max[index]}°C", style = MaterialTheme.typography.bodySmall)
                     Text(text = "Min: ${dailyWeather.temperature_2m_min[index]}°C", style = MaterialTheme.typography.bodySmall)
                 }
